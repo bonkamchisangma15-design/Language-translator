@@ -176,10 +176,8 @@ const dictionaries = {
   hi: {
     'मैं': 'ang.a',
     'वह': 'ua',
-    'वह': 'bia',
     'आप': 'na.a',
     'यह': 'ia',
-    'वह': 'haiwa',
     'आओ': 'reba',
     'आया': 'reba.aha',
     'खोलो': 'khulibo',
@@ -204,10 +202,10 @@ const dictionaries = {
     'क्यों': 'maina',
     'कैसे': 'maidake',
     'कहाँ': 'bano',
-    'कौन': 'badia',
+    'कौन': 'saka',
+    'कौन सा': 'badia',
     'किसको': 'sako',
     'कब': 'mijal',
-    'कौन': 'saka',
     'हाँ': 'hoe',
     'नहीं': 'na',
     'प्यार': 'kasa.a',
@@ -377,11 +375,11 @@ function normalizeText(text) {
   return text
     .trim()
     .toLowerCase()
-    .replace(/[.,!?]+/g, '')
+    .replace(/[?!,]+/g, '')
     .replace(/\s+/g, ' ');
 }
 
-function translatePhrase(text, from, to) {
+function translatePhrase(text, from) {
   const normalized = normalizeText(text);
   if (phraseDictionary[from] && phraseDictionary[from][normalized]) {
     return phraseDictionary[from][normalized];

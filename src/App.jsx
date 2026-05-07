@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import './index.css';
 import translateText, { detectLanguage } from './translator.js';
 
@@ -17,13 +17,13 @@ function App() {
   ];
 
   const examples = [
-    { label: 'Eat food', text: 'eat food' },
-    { label: 'Drink water', text: 'drink water' },
-    { label: 'Thank you', text: 'thank you' },
     { label: 'How are you?', text: 'how are you' },
-    { label: 'घर कहाँ है', text: 'घर कहाँ है' },
-    { label: 'खाना खाओ', text: 'खाना खाओ' },
-    { label: 'sisa kimang', text: 'sisa kimang' },
+    { label: 'I am fine', text: 'i am fine' },
+    { label: 'What is your name?', text: 'what is your name' },
+    { label: 'She came by bus yesterday', text: 'she came by bus yesterday' },
+    { label: 'Will you come with me?', text: 'will you come with me' },
+    { label: 'Where did you sleep?', text: 'where did you sleep' },
+    { label: 'क्या आप मुझसे प्यार करते हैं', text: 'क्या आप मुझसे प्यार करते हैं' },
   ];
 
   const languageName = (code) => {
@@ -31,7 +31,7 @@ function App() {
     return lang ? lang.name : 'Unknown';
   };
 
-  const handleTranslate = () => {
+  const handleTranslate = useCallback(() => {
     const text = inputText || '';
     if (!text.trim()) {
       setTranslatedText('');
@@ -42,11 +42,11 @@ function App() {
     const source = sourceLang === 'auto' ? detectLanguage(text) : sourceLang;
     setDetectedLang(source);
     setTranslatedText(translateText(text, source, targetLang));
-  };
+  }, [inputText, sourceLang, targetLang]);
 
   useEffect(() => {
     handleTranslate();
-  }, [inputText, sourceLang, targetLang]);
+  }, [handleTranslate]);
 
   return (
     <div className="app">
