@@ -20,7 +20,10 @@ const phraseDictionary = {
     'how did you come': 'na.a maidake reba.a',
     'i shall come with you': 'ang.a nangming reangen',
     'will you come with me': 'na.ara ang.ming rebagenma',
-    'food': 'i haam',
+    'food': 'cha·ani',
+    'chicken': 'do.u',
+    'meat': 'be·en',
+    'good': 'namen',
     'goodbye': 'jaa',
     'thank you': 'mitela',
   },
@@ -74,7 +77,7 @@ const phraseDictionary = {
 const dictionaries = {
   en: {
 // Pronouns
-    i: 'ang.a',
+    i: 'anga',
     he: 'ua',
     she: 'bia',
     you: 'na.a',
@@ -171,7 +174,10 @@ const dictionaries = {
     house: 'apa',
     work: 'kam',
     water: 'donkhwa',
-    food: 'i haam',
+    food: 'cha·ani',
+    good: 'namen',
+    chicken: 'do.u',
+    meat: 'be·en',
     meal: 'mi',
     'believe': 'Bi',
     'belittle': 'Chon',
