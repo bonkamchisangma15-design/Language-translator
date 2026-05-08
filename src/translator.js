@@ -231,7 +231,6 @@ const dictionaries = {
     'boll': 'Bitckn',
     'bone': 'Greng',
     'bonnet': 'Memrang',
-    'book': 'Ki\'tap',
     'booty': 'Ra\'seke',
     'border': 'Sima',
     'bore': 'A\'kol',
@@ -244,7 +243,6 @@ const dictionaries = {
     'bounteous': 'One',
     'bountiful': 'On\'e',
     'bow': 'Chri',
-    'bow': 'Olakia',
     'bowels': 'Bil',
     'bowl': 'Piala',
     'boy': 'Mo',
@@ -272,7 +270,6 @@ const dictionaries = {
     'brim': 'Hiking',
     'brindled': 'Brin',
     'brine': 'Kari',
-    'bring': 'brought',
   },
 
   hi: {
@@ -418,7 +415,6 @@ const dictionaries = {
     'donkhwa': 'water',
     'i haam': 'food',
     'sala': 'vegetable',
-    'mi': 'rice',
     'namenga': 'fine',
     'bi': 'believe',
     'chon': 'belittle',
@@ -430,12 +426,10 @@ const dictionaries = {
     'namgni': 'benefit',
     'besought': 'beseech',
     'champeng': 'beset',
-    'champeng': 'besiege',
     'nambata': 'best',
     'oiva': 'bestow',
     'aramaria': 'bet',
     'Seng*': 'betimes',
-    'bia': 'betroth',
     'namkala': 'better',
     'ring': 'beverage',
     'gisik': 'beware',
@@ -501,7 +495,6 @@ const dictionaries = {
     'Gii.dc': 'bran',
     'tonu': 'brandish',
     'chu': 'brandy',
-    'bil': 'brass',
     'pitolniko': 'brazen',
     'Nap<': 'breach',
     'gipeng': 'breadth',
@@ -571,7 +564,6 @@ const dictionaries = {
     'pen': 'कलम',
     'box': 'बॉक्स',
     'porikka': 'परीक्षा',
-    'mi': 'दोपहर',
     'bus': 'बस',
     'tangka': 'पैसे',
     'gari': 'गाड़ी',
@@ -604,6 +596,42 @@ const dictionaries = {
     'tungta': 'सूखा मछली',
   },
 
+};
+
+// Verb conjugations for Garo
+const verbConjugations = {
+  'eat': { root: 'cha·a', present: 'cha·enga', past: 'cha·aha', future: 'cha·gen', negative: 'cha·jawa' },
+  'go': { root: 're·ang', present: 're·angenga', past: 're·angaha', future: 're·anggen', negative: 're·angjawa' },
+  'come': { root: 're·ba', present: 're·baenga', past: 're·baaha', future: 're·bagen', negative: 're·bajawa' },
+  'sleep': { root: 'tua', present: 'tusienga', past: 'tusiaha', future: 'tusigen', negative: 'tusijawa' },
+  'read': { root: 'pora', present: 'poraenga', past: 'poraaha', future: 'poragen', negative: 'porajawa' },
+  'write': { root: 'sera', present: 'seraenga', past: 'seraaha', future: 'seragen', negative: 'serajawa' },
+  'drink': { root: 'ringbo', present: 'ringenga', past: 'ringaha', future: 'ringgen', negative: 'ringjawa' },
+  'run': { root: 'katbo', present: 'katenga', past: 'kataha', future: 'katgen', negative: 'katjawa' },
+  'see': { root: 'nia', present: 'nienga', past: 'niaha', future: 'nigen', negative: 'nijawa' },
+  'love': { root: 'kasa.a', present: 'kasa.enga', past: 'kasa.aha', future: 'kasa.gen', negative: 'kasa.jawa' },
+};
+
+// Verb stems for irregular forms
+const verbStems = {
+  'ate': 'eat',
+  'eating': 'eat',
+  'goes': 'go',
+  'went': 'go',
+  'saw': 'see',
+  'seen': 'see',
+  'loved': 'love',
+  'loving': 'love',
+  'slept': 'sleep',
+  'sleeping': 'sleep',
+  'read': 'read', // past is same
+  'reading': 'read',
+  'wrote': 'write',
+  'writing': 'write',
+  'drank': 'drink',
+  'drinking': 'drink',
+  'ran': 'run',
+  'running': 'run',
 };
 
 // Garo grammar is simple - mainly word order with tense suffixes
@@ -686,6 +714,64 @@ function translateWordByWord(text, dictionary) {
     .trim();
 }
 
+// Parse English sentence into components
+function parseEnglish(sentence) {
+  const words = normalizeText(sentence).split(' ');
+  let subject = null, verb = null, object = null, tense = 'present', isContinuous = false, isPast = false, isFuture = false, isNegative = false;
+
+  for (let i = 0; i < words.length; i++) {
+    const word = words[i];
+    if (['i', 'you', 'he', 'she', 'it', 'we', 'they'].includes(word)) {
+      subject = word;
+    } else if (['am', 'is', 'are', 'was', 'were'].includes(word)) {
+      if (word === 'was' || word === 'were') isPast = true;
+      if (words[i+1] && words[i+1].endsWith('ing')) isContinuous = true;
+    } else if (word === 'will') {
+      isFuture = true;
+    } else if (word === 'not') {
+      isNegative = true;
+    } else if (verbStems[word] || verbConjugations[word] || word.endsWith('ing') || word.endsWith('ed') || word.endsWith('s')) {
+      verb = verbStems[word] || word.replace(/ing$|ed$|es$|s$/, '');
+      if (verbStems[word] && verbStems[word] !== word && !word.endsWith('ing')) isPast = true;
+      if (word.endsWith('ing')) isContinuous = true;
+      if (word.endsWith('ed')) isPast = true;
+      if (word.endsWith('s') && !word.endsWith('es')) isPast = false; // present for 3rd person
+    } else if (!subject && !verb) {
+      object = word;
+    } else if (subject && verb) {
+      object = word;
+    }
+  }
+
+  if (isFuture) tense = 'future';
+  else if (isPast) tense = 'past';
+  else if (isContinuous) tense = 'present_continuous';
+  else tense = 'present';
+
+  return { subject, verb, object, tense, isNegative };
+}
+
+// Translate sentence using rule-based parsing
+function translateSentence(text, from, to) {
+  if (from === 'en' && to === 'grt') {
+    const parsed = parseEnglish(text);
+    if (parsed.subject && parsed.verb) {
+      const subj = dictionaries.en[parsed.subject] || parsed.subject;
+      const obj = parsed.object ? (dictionaries.en[parsed.object] || parsed.object) : '';
+      const verbData = verbConjugations[parsed.verb];
+      if (verbData) {
+        let garoVerb = verbData.root;
+        if (parsed.tense === 'present_continuous') garoVerb = verbData.present;
+        else if (parsed.tense === 'past') garoVerb = verbData.past;
+        else if (parsed.tense === 'future') garoVerb = verbData.future;
+        if (parsed.isNegative) garoVerb = verbData.negative;
+        return `${subj} ${obj} ${garoVerb}`.trim();
+      }
+    }
+  }
+  return null;
+}
+
 export function detectLanguage(text) {
   const normalized = normalizeText(text);
   // Detect Hindi by Devanagari script
@@ -722,6 +808,10 @@ export default function translateText(text, from, to) {
   // Try pattern-based translation
   const pattern = translatePattern(normalized, from, to);
   if (pattern) return pattern;
+
+  // Try sentence parsing for English to Garo
+  const sentence = translateSentence(normalized, from, to);
+  if (sentence) return sentence;
 
   // Word-by-word translation
   if (from === 'en' && to === 'grt') {
