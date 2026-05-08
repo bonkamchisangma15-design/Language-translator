@@ -20,6 +20,9 @@ const phraseDictionary = {
     'how did you come': 'na.a maidake reba.a',
     'i shall come with you': 'ang.a nangming reangen',
     'will you come with me': 'na.ara ang.ming rebagenma',
+    'food': 'khimang',
+    'goodbye': 'jaa',
+    'thank you': 'mitela',
   },
   hi: {
     'आप कैसे हैं': 'na.a namengama',
@@ -38,6 +41,10 @@ const phraseDictionary = {
     'आप कैसे आए': 'na.a maidake reba.a',
     'मैं आपके साथ आऊंगा': 'ang.a nangming reangen',
     'आप मेरे साथ आएंगे': 'na.ara ang.ming rebagenma',
+    'धन्यवाद': 'mitela',
+    'अलविदा': 'jaa',
+    'मुझे भूख लगी है': 'ang.a mi chajok',
+    'मुझे प्यास लगी है': 'ang.a donkhwa ringri',
   },
   grt: {
     'na.a namengama': 'how are you',
@@ -56,6 +63,8 @@ const phraseDictionary = {
     'na.a maidake reba.a': 'how did you come',
     'ang.a nangming reangen': 'i shall come with you',
     'na.ara ang.ming rebagenma': 'will you come with me',
+    'jaa': 'goodbye',
+    'mitela': 'thank you',
   },
 };
 
@@ -131,6 +140,10 @@ const dictionaries = {
     your: 'nangni',
     please: 'sorang',
     thank: 'mitela',
+    thanks: 'mitela',
+    is: 'a',
+    wrong: 'bad',
+    goodbye: 'jaa',
     hello: 'a chikku',
     sorry: 'kema',
 
@@ -143,7 +156,8 @@ const dictionaries = {
     house: 'apa',
     work: 'kam',
     water: 'donkhwa',
-    food: 'kimang',
+    food: 'khimang',
+    meal: 'mi',
   },
 
   hi: {
@@ -188,10 +202,12 @@ const dictionaries = {
     'पेड़': 'gittam',
     'घर': 'apa',
     'काम': 'kam',
-    'खाना': 'kimang',
+    'खाना': 'khimang',
+    'दोपहर': 'mi',
     'धन्यवाद': 'mitela',
     'माफी': 'kema',
     'कृपया': 'sorang',
+    'अलविदा': 'jaa',
   },
 
   // Garo to English dictionary
@@ -264,7 +280,10 @@ const dictionaries = {
     'apa': 'house',
     'kam': 'work',
     'donkhwa': 'water',
+    'khimang': 'food',
     'kimang': 'food',
+    'sala': 'vegetable',
+    'mi': 'meal',
     'namenga': 'fine',
   },
 
@@ -289,6 +308,7 @@ const dictionaries = {
     'chagen': 'खाएगा',
     'ringbo': 'पीओ',
     'am.a': 'जीतो',
+    'sala': 'सब्जी',
     'reangbo': 'जाओ',
     're.anga': 'गए',
     'katbo': 'दौड़ो',
@@ -335,7 +355,10 @@ const dictionaries = {
     'apa': 'घर',
     'kam': 'काम',
     'donkhwa': 'पानी',
+    'khimang': 'खाना',
     'kimang': 'खाना',
+    'sala': 'सब्जी',
+    'mi': 'दोपहर',
   },
 };
 
