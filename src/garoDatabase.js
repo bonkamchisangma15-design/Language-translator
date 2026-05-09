@@ -188,6 +188,38 @@ function generateVariants(canonical) {
 
 function augmentEntry(entry) {
   const { root, modifiers, combined_form } = parseCompoundGaro(entry.garo);
+  let partOfSpeech = 'noun';
+  let semanticGroup = 'general';
+
+  if (entry.category === 'color') {
+    partOfSpeech = 'adjective';
+    semanticGroup = 'appearance';
+  } else if (entry.category === 'verb') {
+    partOfSpeech = 'verb';
+    semanticGroup = 'action';
+  } else if (entry.category === 'emotion') {
+    partOfSpeech = 'noun';
+    semanticGroup = 'feeling';
+  } else if (entry.category === 'animal' || entry.category === 'bird' || entry.category === 'fish' || entry.category === 'insect') {
+    partOfSpeech = 'noun';
+    semanticGroup = 'living_thing';
+  } else if (entry.category === 'fruit' || entry.category === 'vegetable') {
+    partOfSpeech = 'noun';
+    semanticGroup = 'food';
+  } else if (entry.category === 'body_part') {
+    partOfSpeech = 'noun';
+    semanticGroup = 'anatomy';
+  } else if (entry.category === 'family') {
+    partOfSpeech = 'noun';
+    semanticGroup = 'relationship';
+  } else if (entry.category === 'number') {
+    partOfSpeech = 'numeral';
+    semanticGroup = 'quantity';
+  } else if (entry.category === 'phrase') {
+    partOfSpeech = 'phrase';
+    semanticGroup = 'communication';
+  }
+
   return {
     ...entry,
     hindi: entry.hindi || '',
@@ -196,6 +228,9 @@ function augmentEntry(entry) {
     root: entry.root || root,
     modifiers: entry.modifiers && entry.modifiers.length ? entry.modifiers : modifiers,
     combined_form: entry.combined_form || combined_form,
+    partOfSpeech,
+    semanticGroup,
+    priority: 'exact'
   };
 }
 
@@ -231,7 +266,7 @@ class Dictionary {
   rebuildFuzzyIndex() {
     this.fuzzyIndex = new Fuse(this.entries, {
       keys: ['english'],
-      threshold: 0.4,
+      threshold: 0.5,
       includeScore: true,
     });
   }
@@ -250,7 +285,7 @@ class Dictionary {
     // 3. fuzzy match
     if (this.fuzzyIndex) {
       const results = this.fuzzyIndex.search(normalized);
-      if (results.length && results[0].score < 0.4) {
+      if (results.length && results[0].score < 0.5) {
         return results[0].item;
       }
     }
@@ -451,6 +486,7 @@ const rawGaroEntries = [
   { english: 'god', garo: 'gitil', category: 'person', classifier: getClassifier('person'), root: 'gitil', modifiers: [], tense_forms: {}, examples: [], dialect: '', source: '' },
   { english: 'sky', garo: 'salanti', category: 'object', classifier: getClassifier('object'), root: 'salanti', modifiers: [], tense_forms: {}, examples: [], dialect: '', source: '' },
   { english: 'moon', garo: 'chiring', category: 'object', classifier: getClassifier('object'), root: 'chiring', modifiers: [], tense_forms: {}, examples: [], dialect: '', source: '' },
+  { english: 'bite', garo: 'dak', category: 'verb', classifier: getClassifier('verb'), root: 'dak', modifiers: [], tense_forms: {}, examples: [], dialect: '', source: '' },
 ];
 
 const dictionary = new Dictionary(rawGaroEntries);
