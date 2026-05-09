@@ -2,6 +2,8 @@
 // Based on documented Garo vocabulary and sentence structures from languageshome.com and Garo learning resources
 // Garo has simple grammar: mainly word order + tense suffixes (-aha past, -en future, -enga continuous)
 
+import { dictionary, getEntryByEnglish, translateNumberedPhrase } from './garoDatabase.js';
+
 const phraseDictionary = {
   en: {
     'how are you': 'na.a namengama',
@@ -11,6 +13,10 @@ const phraseDictionary = {
     'yes i love you': 'hoe ang.a nangna kasa.a',
     'he is eating an apple': 'bia apple cha.enga',
     'he ate an apple': 'bia apple cha.aha',
+    'the dog bit me': 'a·chak angko dakaha',
+    'i drink water': 'anga chi ringa',
+    'he ran fast': 'ua rakki kata',
+    'the food is good': 'cha·ani a namen',
     'i saw the film last week': 'ang.a ia film ko nia mija antio',
     'she came by bus yesterday': 'bia bus o raba.a mijalo',
     'they went to the mosque': 'bisong olakiramchi re.anga',
@@ -63,6 +69,10 @@ const phraseDictionary = {
     'bia walgimik tua': 'he slept the whole night',
     'na.a banoni reba.a': 'where did you come from',
     'na.a maina reba.a': 'why did you come',
+    'a·chak angko dakaha': 'the dog bit me',
+    'anga chi ringa': 'i drink water',
+    'ua rakki kata': 'he ran fast',
+    'cha·ani a namen': 'the food is good',
     'na.a maidake reba.a': 'how did you come',
     'ang.a nangming reangen': 'i shall come with you',
     'na.ara ang.ming rebagenma': 'will you come with me',
@@ -94,19 +104,25 @@ const dictionaries = {
     opened: 'khulia.a',
     sit: 'asongbo',
     walk: 'roranbo',
-    eat: 'cha.ani',
-    ate: 'cha.aha',
-    eating: 'cha.a',
-    drink: 'ringbo',
+    eat: 'cha·a',
+    ate: 'cha·aha',
+    eating: 'cha·enga',
+    drink: 'ring',
+    drank: 'ringaha',
     win: 'am.a',
-    go: 'reangbo',
-    run: 'katbo',
+    go: 're·ang',
+    ran: 'kata',
+    run: 'kat',
     write: 'se.a',
     pay: 'gama',
     bring: 'raba.a',
     drive: 'sal.a',
-    sleep: 'tua',
-    slept: 'tusia',
+    sleep: 'tusi',
+    slept: 'tusiha',
+    bite: 'dak',
+    bit: 'dakaha',
+    cut: 'den',
+    cutting: 'denenga',
 
     // Nouns
     name: 'bimung',
@@ -131,15 +147,34 @@ const dictionaries = {
     rice: 'mi',
     curry: 'jaba',
     side: 'sam',
-    meat: 'do.o',
-    chicken: 'do.o',
     pork: 'wak',
     mutton: 'dlang',
     vegetables: 'sak',
     greens: 'sam-bi-jak',
     chutney: 'na-kam',
     dried: 'tungta',
-    fish: 'au',
+    fish: 'na·a',
+    dog: 'achak',
+    cat: 'bi·sim',
+    cow: 'misi',
+    bird: 'do·si',
+    head: 'skang',
+    eye: 'mikron',
+    ear: 'nachil',
+    nose: 'nok',
+    mouth: 'ku·sik',
+    leg: 'ja',
+    body: 'be\'en',
+    happy: 'katcha',
+    sad: 'ka·sachia',
+    angry: 'ka·ding',
+    love: 'ka·saa',
+    fear: 'ken·a',
+    me: 'angko',
+    water: 'donkhwa',
+    food: 'cha·ani',
+    good: 'namen',
+    meal: 'mi',
 
     // Question words
     what: 'maia',
@@ -154,7 +189,6 @@ const dictionaries = {
     // Common words
     yes: 'hoe',
     no: 'jok',
-    love: 'kasa.a',
     your: 'nangni',
     please: 'sorang',
     thank: 'mitela',
@@ -168,17 +202,9 @@ const dictionaries = {
     // Real Garo words (verified from authentic sources)
     school: 'skolchi',
     teacher: 'guru',
-    dog: 'achak',
-    cat: 'menggo',
     tree: 'gittam',
     house: 'apa',
     work: 'kam',
-    water: 'donkhwa',
-    food: 'cha·ani',
-    good: 'namen',
-    chicken: 'do.u',
-    meat: 'be·en',
-    meal: 'mi',
     'believe': 'Bi',
     'belittle': 'Chon',
     'bell': 'Konta',
@@ -203,7 +229,6 @@ const dictionaries = {
     'biped': '3a',
     'birth': 'Atobiani',
     'bitch': 'Aebak',
-    'bite': 'bit',
     'bladder': 'Su-bu',
     'blade': 'Bimik',
     'blame': 'Matnan',
@@ -231,7 +256,6 @@ const dictionaries = {
     'board': 'Tokta',
     'boast': 'Gaora',
     'boat': 'King',
-    'body': 'Be\'en',
     'boil': 'Rita',
     'bold': 'Ka\'donggipa',
     'boll': 'Bitckn',
@@ -392,7 +416,6 @@ const dictionaries = {
     'jaba': 'curry',
     'sam': 'side',
     'do.o': 'meat',
-    'wak': 'pork',
     'dlang': 'mutton',
     'sak': 'vegetable',
     'sam-bi-jak': 'greens',
@@ -414,14 +437,28 @@ const dictionaries = {
     'skolchi': 'school',
     'guru': 'teacher',
     'achak': 'dog',
-    'menggo': 'cat',
-    'gittam': 'tree',
-    'apa': 'house',
-    'kam': 'work',
-    'donkhwa': 'water',
+    'bi·sim': 'cat',
+    'misi': 'cow',
+    'wak': 'pig',
+    'do·o': 'chicken',
+    'na·a': 'fish',
+    'do·si': 'bird',
+    'skang': 'head',
+    'mikron': 'eye',
+    'nachil': 'ear',
+    'nok': 'nose',
+    'ku·sik': 'mouth',
+    'jak': 'hand',
+    'ja': 'leg',
+    'be\'en': 'body',
+    'katcha': 'happy',
+    'ka·sachia': 'sad',
+    'ka·ding': 'angry',
+    'ka·saa': 'love',
+    'ken·a': 'fear',
     'i haam': 'food',
-    'sala': 'vegetable',
-    'namenga': 'fine',
+    'cha·ani': 'food',
+    'namen': 'good',
     'bi': 'believe',
     'chon': 'belittle',
     'konta': 'bell',
@@ -609,13 +646,15 @@ const verbConjugations = {
   'eat': { root: 'cha·a', present: 'cha·enga', past: 'cha·aha', future: 'cha·gen', negative: 'cha·jawa' },
   'go': { root: 're·ang', present: 're·angenga', past: 're·angaha', future: 're·anggen', negative: 're·angjawa' },
   'come': { root: 're·ba', present: 're·baenga', past: 're·baaha', future: 're·bagen', negative: 're·bajawa' },
-  'sleep': { root: 'tua', present: 'tusienga', past: 'tusiaha', future: 'tusigen', negative: 'tusijawa' },
+  'sleep': { root: 'tusi', present: 'tusienga', past: 'tusiha', future: 'tusigen', negative: 'tusijawa' },
   'read': { root: 'pora', present: 'poraenga', past: 'poraaha', future: 'poragen', negative: 'porajawa' },
   'write': { root: 'sera', present: 'seraenga', past: 'seraaha', future: 'seragen', negative: 'serajawa' },
-  'drink': { root: 'ringbo', present: 'ringenga', past: 'ringaha', future: 'ringgen', negative: 'ringjawa' },
-  'run': { root: 'katbo', present: 'katenga', past: 'kataha', future: 'katgen', negative: 'katjawa' },
+  'drink': { root: 'ring', present: 'ringa', past: 'ringaha', future: 'ringgen', negative: 'ringjawa' },
+  'run': { root: 'kat', present: 'katenga', past: 'kata', future: 'katgen', negative: 'katjawa' },
   'see': { root: 'nia', present: 'nienga', past: 'niaha', future: 'nigen', negative: 'nijawa' },
-  'love': { root: 'kasa.a', present: 'kasa.enga', past: 'kasa.aha', future: 'kasa.gen', negative: 'kasa.jawa' },
+  'love': { root: 'ka·saa', present: 'ka·sa.enga', past: 'ka·sa.aha', future: 'ka·sa.gen', negative: 'ka·sa.jawa' },
+  'bite': { root: 'dak', present: 'dakenga', past: 'dakaha', future: 'dakgen', negative: 'dakjawa' },
+  'cut': { root: 'den', present: 'denenga', past: 'denaha', future: 'dengen', negative: 'denjawa' },
 };
 
 // Verb stems for irregular forms
@@ -638,6 +677,11 @@ const verbStems = {
   'drinking': 'drink',
   'ran': 'run',
   'running': 'run',
+  'bit': 'bite',
+  'bitten': 'bite',
+  'biting': 'bite',
+  'cut': 'cut',
+  'cutting': 'cut',
 };
 
 // Garo grammar is simple - mainly word order with tense suffixes
@@ -647,7 +691,7 @@ const translationPatterns = [
     from: 'en',
     to: 'grt',
     regex: /^where is (?:the )?(.+)$/,
-    handler: (match) => `${translateWordByWord(match[1], dictionaries.en)} bano`,
+    handler: (match) => `${translateWordByWord(match[1], 'en', 'grt')} bano`,
   },
   {
     from: 'en',
@@ -656,32 +700,32 @@ const translationPatterns = [
     handler: (match) => {
       const verb = normalizeText(match[1]);
       if (verb === 'eat') return 'na.a cha.aha';
-      return `na.a ${translateWordByWord(match[1], dictionaries.en)}`.trim();
+      return `na.a ${translateWordByWord(match[1], 'en', 'grt')}`.trim();
     },
   },
   {
     from: 'en',
     to: 'grt',
     regex: /^i want (.+)$/,
-    handler: (match) => `ang.a se ${translateWordByWord(match[1], dictionaries.en)}`,
+    handler: (match) => `ang.a se ${translateWordByWord(match[1], 'en', 'grt')}`,
   },
   {
     from: 'en',
     to: 'grt',
     regex: /^do you have (.+)$/,
-    handler: (match) => `na.a ${translateWordByWord(match[1], dictionaries.en)} jok ma`,
+    handler: (match) => `na.a ${translateWordByWord(match[1], 'en', 'grt')} jok ma`,
   },
   {
     from: 'hi',
     to: 'grt',
     regex: /^(.+) कहाँ है$/,
-    handler: (match) => `${translateWordByWord(match[1], dictionaries.hi)} bano`,
+    handler: (match) => `${translateWordByWord(match[1], 'hi', 'grt')} bano`,
   },
   {
     from: 'hi',
     to: 'grt',
     regex: /^मुझे (.+) चाहिए$/,
-    handler: (match) => `ang.a se ${translateWordByWord(match[1], dictionaries.hi)}`,
+    handler: (match) => `ang.a se ${translateWordByWord(match[1], 'hi', 'grt')}`,
   },
 ];
 
@@ -709,11 +753,55 @@ function translatePattern(text, from, to) {
   return match ? pattern.handler(match) : null;
 }
 
-function translateWordByWord(text, dictionary) {
+function translateNumberedText(text, from, to) {
+  if (from === 'en' && to === 'grt') {
+    return translateNumberedPhrase(text);
+  }
+  return null;
+}
+
+function translateWordByWord(text, from, to) {
   const normalized = normalizeText(text);
+  // First, check if the whole phrase has an entry
+  let entry;
+  if (from === 'en' && to === 'grt') {
+    entry = dictionary.searchEnglish(normalized);
+    if (entry && entry.garo) return entry.garo;
+  }
+  if (from === 'hi' && to === 'grt') {
+    entry = dictionary.searchHindi(normalized);
+    if (entry && entry.garo) return entry.garo;
+  }
+  if (from === 'grt' && to === 'en') {
+    entry = dictionary.searchGaro(normalized);
+    if (entry && entry.english) return entry.english;
+  }
+  if (from === 'grt' && to === 'hi') {
+    entry = dictionary.searchGaro(normalized);
+    if (entry && entry.hindi) return entry.hindi;
+  }
+  // Otherwise, word by word
   return normalized
     .split(' ')
-    .map((word) => dictionary[word])
+    .map((word) => {
+      if (from === 'en' && to === 'grt') {
+        const entry = dictionary.searchEnglish(word);
+        return entry ? entry.garo : '';
+      }
+      if (from === 'hi' && to === 'grt') {
+        const entry = dictionary.searchHindi(word);
+        return entry ? entry.garo : '';
+      }
+      if (from === 'grt' && to === 'en') {
+        const entry = dictionary.searchGaro(word);
+        return entry ? entry.english : '';
+      }
+      if (from === 'grt' && to === 'hi') {
+        const entry = dictionary.searchGaro(word);
+        return entry ? entry.hindi : '';
+      }
+      return '';
+    })
     .filter(Boolean)
     .join(' ')
     .replace(/\s+/g, ' ')
@@ -729,6 +817,8 @@ function parseEnglish(sentence) {
     const word = words[i];
     if (['i', 'you', 'he', 'she', 'it', 'we', 'they'].includes(word)) {
       subject = word;
+    } else if (['the', 'a', 'an'].includes(word)) {
+      continue;
     } else if (['am', 'is', 'are', 'was', 'were'].includes(word)) {
       if (word === 'was' || word === 'were') isPast = true;
       if (words[i+1] && words[i+1].endsWith('ing')) isContinuous = true;
@@ -743,7 +833,7 @@ function parseEnglish(sentence) {
       if (word.endsWith('ed')) isPast = true;
       if (word.endsWith('s') && !word.endsWith('es')) isPast = false; // present for 3rd person
     } else if (!subject && !verb) {
-      object = word;
+      subject = word;
     } else if (subject && verb) {
       object = word;
     }
@@ -762,8 +852,8 @@ function translateSentence(text, from, to) {
   if (from === 'en' && to === 'grt') {
     const parsed = parseEnglish(text);
     if (parsed.subject && parsed.verb) {
-      const subj = dictionaries.en[parsed.subject] || parsed.subject;
-      const obj = parsed.object ? (dictionaries.en[parsed.object] || parsed.object) : '';
+      const subj = getEntryByEnglish(parsed.subject)?.garo || dictionaries.en[parsed.subject] || parsed.subject;
+      const obj = parsed.object ? (getEntryByEnglish(parsed.object)?.garo || dictionaries.en[parsed.object] || parsed.object) : '';
       const verbData = verbConjugations[parsed.verb];
       if (verbData) {
         let garoVerb = verbData.root;
@@ -811,6 +901,10 @@ export default function translateText(text, from, to) {
   const phrase = translatePhrase(normalized, from, to);
   if (phrase) return phrase;
 
+  // Try number + classifier translation
+  const numberPhrase = translateNumberedText(normalized, from, to);
+  if (numberPhrase) return numberPhrase;
+
   // Try pattern-based translation
   const pattern = translatePattern(normalized, from, to);
   if (pattern) return pattern;
@@ -821,19 +915,19 @@ export default function translateText(text, from, to) {
 
   // Word-by-word translation
   if (from === 'en' && to === 'grt') {
-    return translateWordByWord(normalized, dictionaries.en);
+    return translateWordByWord(normalized, 'en', 'grt');
   }
 
   if (from === 'hi' && to === 'grt') {
-    return translateWordByWord(normalized, dictionaries.hi);
+    return translateWordByWord(normalized, 'hi', 'grt');
   }
 
   if (from === 'grt' && to === 'en') {
-    return translateWordByWord(normalized, dictionaries.grtToEn);
+    return translateWordByWord(normalized, 'grt', 'en');
   }
 
   if (from === 'grt' && to === 'hi') {
-    return translateWordByWord(normalized, dictionaries.grtToHi);
+    return translateWordByWord(normalized, 'grt', 'hi');
   }
 
   // Cross-language translation via Garo bridge
@@ -843,4 +937,12 @@ export default function translateText(text, from, to) {
   }
 
   return 'Translation unavailable for this language pair.';
+}
+
+export function addVocabularyEntry(entry) {
+  dictionary.addEntry(entry);
+}
+
+export function getDictionary() {
+  return dictionary;
 }
