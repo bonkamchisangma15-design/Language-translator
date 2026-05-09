@@ -119,7 +119,7 @@ const dictionaries = {
     drive: 'sal.a',
     sleep: 'tusi',
     slept: 'tusiha',
-    bite: 'dak',
+    bite: 'chika',
     bit: 'dakaha',
     cut: 'den',
     cutting: 'denenga',
@@ -653,7 +653,7 @@ const verbConjugations = {
   'run': { root: 'kat', present: 'katenga', past: 'kata', future: 'katgen', negative: 'katjawa' },
   'see': { root: 'nia', present: 'nienga', past: 'niaha', future: 'nigen', negative: 'nijawa' },
   'love': { root: 'ka·saa', present: 'ka·sa.enga', past: 'ka·sa.aha', future: 'ka·sa.gen', negative: 'ka·sa.jawa' },
-  'bite': { root: 'dak', present: 'dakenga', past: 'dakaha', future: 'dakgen', negative: 'dakjawa' },
+  'bite': { root: 'chika', present: 'chikaenga', past: 'chikaaha', future: 'chikagen', negative: 'chikajawa' },
   'cut': { root: 'den', present: 'denenga', past: 'denaha', future: 'dengen', negative: 'denjawa' },
 };
 

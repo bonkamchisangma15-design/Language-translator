@@ -486,7 +486,7 @@ const rawGaroEntries = [
   { english: 'god', garo: 'gitil', category: 'person', classifier: getClassifier('person'), root: 'gitil', modifiers: [], tense_forms: {}, examples: [], dialect: '', source: '' },
   { english: 'sky', garo: 'salanti', category: 'object', classifier: getClassifier('object'), root: 'salanti', modifiers: [], tense_forms: {}, examples: [], dialect: '', source: '' },
   { english: 'moon', garo: 'chiring', category: 'object', classifier: getClassifier('object'), root: 'chiring', modifiers: [], tense_forms: {}, examples: [], dialect: '', source: '' },
-  { english: 'bite', garo: 'dak', category: 'verb', classifier: getClassifier('verb'), root: 'dak', modifiers: [], tense_forms: {}, examples: [], dialect: '', source: '' },
+  { english: 'bite', garo: 'chika', category: 'verb', classifier: getClassifier('verb'), root: 'chika', modifiers: [], tense_forms: {}, examples: [], dialect: '', source: '' },
 ];
 
 const dictionary = new Dictionary(rawGaroEntries);
